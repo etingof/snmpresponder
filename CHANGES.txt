@@ -1,0 +1,21 @@
+
+Revision 0.0.0, released 13-01-2019
+-----------------------------------
+
+- Initial public release
+
+  As of this release, the SNMP Command Responder tool can run one or
+  more SNMP agents and maintain one or more trees of MIB objects
+  representing SNMP-managed entities. Received messages are applied
+  onto one of the MIB trees chosen by tool's configuration.
+
+  As of this initial version, the basic functionality seems to
+  work, however:
+
+  * the plugin feature is not fully implemented
+  * GETNEXT/GETBULK performance needs to be improved
+  * network transparency is not operational
+  * the documentation is up, though still lacking at places
+  * many imaginable configuration examples are not yet present
+  * apparently, pysnmp 5.x API needs minor tweaks
+  * unit tests is a highly desired thing
