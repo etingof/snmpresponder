@@ -247,7 +247,7 @@ Expands into a human-friendly representation of current date and time in local t
 ++++++++++++++++++++++++
 
 Expands into a floating point number representing the number of seconds passed since
-start if UNIX epoch or SNMP Proxy Forwarder process start respectively:
+start if UNIX epoch or SNMP Command Responder process start respectively:
 
 * *${timestamp}:* 1496354552.59
 * *${uptime}:* 0003600.59
