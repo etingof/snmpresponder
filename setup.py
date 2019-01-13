@@ -82,6 +82,7 @@ params.update(
      'url': "https://github.com/etingof/snmpresponder",
      'platforms': ['any'],
      'classifiers': [x for x in classifiers.split('\n') if x],
+     'packages': ['snmpresponder', 'snmpresponder.plugins'],
      'entry_points': {
          'console_scripts': [
              'snmpresponderd = snmpresponder.snmpresponderd:main'
