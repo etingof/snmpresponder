@@ -806,9 +806,10 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
             'mib-text-search-path-list', *mibTreeCfgPath,
             default=[], vector=True)
 
-        mibCodePatternPaths = cfgTree.getAttrValue(
-            'mib-code-modules-pattern-list', *mibTreeCfgPath,
-            default=[], vector=True)
+        mibCodePatternPaths = macro.expandMacros(
+            cfgTree.getAttrValue('mib-code-modules-pattern-list', *mibTreeCfgPath, default=[], vector=True),
+            {'config-dir': os.path.dirname(cfgFile)}
+        )
 
         mibBuilder = builder.MibBuilder()
 
