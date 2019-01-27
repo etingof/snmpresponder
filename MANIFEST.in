@@ -1,6 +1,6 @@
 include *.txt *.md
 recursive-include docs/source *.rst *.conf *.svg *.ico *.py
 recursive-include docs Makefile
-recursive-include conf *.conf *.py
+recursive-include examples *.conf *.py
 recursive-include plugins *.py
 prune docs/build

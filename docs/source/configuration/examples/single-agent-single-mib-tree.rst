@@ -22,9 +22,9 @@ SNMP Command Responder is configured to:
 * respond to SNMPv2c queries
 * serve all queries against the configured MIB tree
 
-.. literalinclude:: /../../conf/single-agent-single-mib-tree/snmpresponderd.conf
+.. literalinclude:: /../../examples/conf/single-agent-single-mib-tree/snmpresponderd.conf
 
-:download:`Download </../../conf/single-agent-single-mib-tree/snmpresponderd.conf>` configuration file.
+:download:`Download </../../examples/conf/single-agent-single-mib-tree/snmpresponderd.conf>` configuration file.
 
 The only implemented managed object
 `SNMPv2-MIB::sysName.0 <http://mibs.snmplabs.com/asn1/SNMPv2-MIB>`_:
@@ -33,9 +33,9 @@ The only implemented managed object
 * only SNMP read operations are implemented
 * write operation are allowed, but has no effect
 
-.. literalinclude:: /../../conf/single-agent-single-mib-tree/managed-objects/SNMPv2-MIB::sysName.py
+.. literalinclude:: /../../examples/conf/single-agent-single-mib-tree/managed-objects/SNMPv2-MIB::sysName.py
 
-:download:`Download </../../conf/single-agent-single-mib-tree/managed-objects/SNMPv2-MIB::sysName.py>` MIB implementation.
+:download:`Download </../../examples/conf/single-agent-single-mib-tree/managed-objects/SNMPv2-MIB::sysName.py>` MIB implementation.
 
 For more information on MIB implementation refer to the
 `MIB implementation <mib-implementation-chapter>`_ chapter in the documentation.

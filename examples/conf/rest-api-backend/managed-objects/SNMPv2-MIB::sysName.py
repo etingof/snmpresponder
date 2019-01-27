@@ -67,7 +67,7 @@ class SysnameObjectInstance(MibScalarInstance):
         def done_callback(future):
             rsp = future.result()
 
-            value = self.syntax.clone(rsp.get('Name', ''))
+            value = self.syntax.clone(rsp.get('HostName', ''))
 
             cbFun((name, value), **context)
 
