@@ -24,10 +24,8 @@ Features
 * SNMPv1/v2c/v3 operations with built-in protocol and transport translation capabilities
 * SNMPv3 USM supports MD5/SHA/SHA224/SHA256/SHA384/SHA512 auth and
   DES/3DES/AES128/AES192/AES256 privacy crypto algorithms
-* Supports all SNMP commands
 * Maintains multiple independent SNMP engines, network transports and MIB trees
-* Offers versatile SNMP PDU routing towards a MIB tree implementation
-* Supports asynchronous MIB objects API
+* Discovers `pip`-installable MIB implementations
 * Extension modules supporting SNMP PDU filtering and on-the-fly modification
 * Works on Linux, Windows and OS X
 

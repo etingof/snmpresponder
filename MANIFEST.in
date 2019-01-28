@@ -1,6 +1,9 @@
 include *.txt *.md
 recursive-include docs/source *.rst *.conf *.svg *.ico *.py
 recursive-include docs Makefile
-recursive-include examples *.conf *.py
+recursive-include examples *.conf *.cfg *.in *.py *.txt *.md *.rst
 recursive-include plugins *.py
 prune docs/build
+prune examples/conf/packaged-mibs/snmpresponder-mibs-examples/snmpresponder_mibs_examples.egg-info
+prune examples/conf/packaged-mibs/snmpresponder-mibs-examples/dist
+prune examples/conf/packaged-mibs/snmpresponder-mibs-examples/build

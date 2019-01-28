@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-"""SNMP Command Responder.
+"""SNMP Command Responder MIBs implementations extension module.
 
-The SNMP Command Responder application is designed to serve user
-data over SNMPv1/v2c/v3.
+Extension module to SNMP Command Responder tool implementing some
+example MIBs.
 """
 import sys
 import os
-import glob
 
 classifiers = """\
 Development Status :: 3 - Alpha
@@ -56,7 +55,7 @@ try:
     from setuptools import setup
 
     params = {
-        'install_requires': ['pysnmp>=5.0.0'],
+        'install_requires': ['snmpresponder<=0.1.0'],
         'zip_safe': True
     }
 
@@ -68,14 +67,15 @@ except ImportError:
 
     from distutils.core import setup
 
-    params = {}
-    params['requires'] = ['pysnmp(>=5.0.0)']
+    params = {
+        'requires': ['snmpresponder(<=0.1.0)']
+    }
 
 doclines = [x.strip() for x in (__doc__ or '').split('\n') if x]
 
 params.update(
-    {'name': "snmpresponder",
-     'version':  open(os.path.join('snmpresponder', '__init__.py')).read().split('\'')[1],
+    {'name': "snmpresponder-mibs-examples",
+     'version':  open(os.path.join('snmpresponder_mibs_examples', '__init__.py')).read().split('\'')[1],
      'description': doclines[0],
      'long_description': ' '.join(doclines[1:]),
      'maintainer': 'Ilya Etingof <etingof@gmail.com>',
@@ -84,48 +84,11 @@ params.update(
      'url': "https://github.com/etingof/snmpresponder",
      'platforms': ['any'],
      'classifiers': [x for x in classifiers.split('\n') if x],
-     'packages': ['snmpresponder', 'snmpresponder.plugins'],
+     'packages': ['snmpresponder_mibs_examples'],
      'entry_points': {
-         'console_scripts': [
-             'snmpresponderd = snmpresponder.snmpresponderd:main'
-         ]
+         'snmpresponder.mibs': 'examples = snmpresponder_mibs_examples'
      },
      'license': "BSD"}
 )
-
-
-params['data_files'] = [
-    ('snmpresponder/' + 'plugins', glob.glob(os.path.join('plugins', '*.py')))
-]
-
-if 'py2exe' in sys.argv:
-    import py2exe
-
-    # pysnmp used by snmpresponder dynamically loads some of its *.py files
-    params['options'] = {
-        'py2exe': {
-            'includes': [
-                'pysnmp.smi.mibs.*',
-                'pysnmp.smi.mibs.instances.*'
-            ],
-            'bundle_files': 1,
-            'compressed': True
-        }
-    }
-
-    params['zipfile'] = None
-
-    del params['data_files']  # no need to store these in .exe
-
-    # additional modules used by snmpresponder but not seen by py2exe
-    for m in ('random',):
-        try:
-            __import__(m)
-        except ImportError:
-            continue
-        else:
-            params['options']['py2exe']['includes'].append(m)
-
-    print("!!! Make sure your pysnmp/pyasn1 packages are NOT .egg'ed!!!")
 
 setup(**params)

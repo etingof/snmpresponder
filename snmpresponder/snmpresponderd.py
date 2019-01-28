@@ -12,6 +12,7 @@ import traceback
 import random
 import re
 import socket
+import pkg_resources
 from pysnmp.error import PySnmpError
 from pysnmp.entity import engine, config
 from pysnmp.entity.rfc3413 import cmdrsp, context
@@ -86,7 +87,7 @@ def main():
 
         def _routeToMibTree(self, *varBinds, **context):
 
-            cbFun = context['cbCtx']
+            cbFun = context['cbFun']
 
             mibTreeReq = gCurrentRequestContext.copy()
 
@@ -131,7 +132,7 @@ def main():
 
             mibInstrum = mibTreeIdMap.get(mibTreeId)
             if not mibInstrum:
-                log.error('MIB tree ID %s does not exist', ctx=logCtx)
+                log.error('MIB tree ID %s does not exist' % mibTreeId, ctx=logCtx)
                 cbFun(varBinds, **dict(context, error=smi_error.GenError()))
                 return
 
@@ -797,6 +798,7 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
                         log.info('configuring MIB tree routing to %s (at %s), composite key: %s' % (mibTreeId, '.'.join(routeCfgPath), '/'.join(k)))
 
     for mibTreeCfgPath in cfgTree.getPathsToAttr('mib-tree-id'):
+
         mibTreeId = cfgTree.getAttrValue('mib-tree-id', *mibTreeCfgPath)
 
         log.info('configuring MIB tree ID %s (at %s)...' % (
@@ -847,9 +849,64 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
                             os.path.join(root, filename), mibTreeId))
                         raise SnmpResponderError(str(ex))
 
-                    log.info('loaded MIB implementation file '
-                             '%s into MIB tree ID %s' % (
-                        os.path.join(root, filename), mibTreeId))
+                    log.info('loaded MIB implementation file %s into MIB tree '
+                             'ID %s' % (os.path.join(root, filename), mibTreeId))
+
+        mibCodePackages = macro.expandMacros(
+            cfgTree.getAttrValue('mib-code-packages-pattern-list', *mibTreeCfgPath, default=[], vector=True),
+            {'config-dir': os.path.dirname(cfgFile)}
+        )
+
+        for mibCodePackage in mibCodePackages:
+
+            mibCodePackageRegExp = re.compile(mibCodePackage)
+
+            for entryPoint in pkg_resources.iter_entry_points('snmpresponder.mibs'):
+                log.debug('found extension entry point %s' % entryPoint.name)
+
+                mibPackage = entryPoint.load()
+
+                root = os.path.dirname(mibPackage.__file__)
+
+                mibPathSet = False
+
+                for filename in os.listdir(root):
+
+                    if filename.startswith('__init__'):
+                        continue
+
+                    if not os.path.isfile(os.path.join(root, filename)):
+                        continue
+
+                    mibPath = '.'.join((entryPoint.name, filename))
+
+                    if not mibCodePackageRegExp.match(mibPath):
+                        log.debug('extension MIB %s from %s is NOT configured, '
+                                  'skipping' % (mibPath, entryPoint.name))
+                        continue
+
+                    if not mibPathSet:
+                        mibBuilder.setMibSources(
+                            builder.DirMibSource(root), *mibBuilder.getMibSources()
+                        )
+                        mibPathSet = True
+
+                    log.debug('loading extension MIB %s from %s into MIB tree '
+                              'ID %s' % (mibPath, entryPoint.name, mibTreeId))
+
+                    module, _ = os.path.splitext(filename)
+
+                    try:
+                        mibBuilder.loadModule(module)
+
+                    except PySnmpError as ex:
+                        log.error('fail to load MIB implementation %s from '
+                                  '%s into MIB tree ID %s' % (mibPath, entryPoint.name,
+                                                              mibTreeId))
+                        raise SnmpResponderError(str(ex))
+
+                    log.info('loaded MIB implementation %s from %s into MIB tree '
+                             'ID %s' % (mibPath, entryPoint.name, mibTreeId))
 
         mibTreeIdMap[mibTreeId] = instrum.MibInstrumController(mibBuilder)
 
