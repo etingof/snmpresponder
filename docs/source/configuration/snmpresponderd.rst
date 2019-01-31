@@ -439,6 +439,44 @@ Responder should search for MIB modules expressed in pysnmp MIB/SMI data model.
 The matching modules will be loaded, executed and brought on-line by SNMP
 Command Responder and served to SNMP managers.
 
+.. code-block:: bash
+
+    managed-objects-group {
+      mib-text-search-path-list: http://mibs.snmplabs.com/asn1/
+      mib-code-modules-pattern-list: ${config-dir}/managed-objects/.*py[co]?
+
+      mib-tree-id: managed-objects-1
+    }
+
+.. note::
+
+   Refer to `MIB implementation <mib-implementation-chapter>`_ chapter for
+   information on how to prepare MIB implementation module.
+
+.. _mib-code-packages-pattern-list:
+
+*mib-code-packages-pattern-list*
+++++++++++++++++++++++++++++++++
+
+List of regular expressions matching the files residing in the Python package
+extending the *snmpresponder.mibs*
+`entry point <https://packaging.python.org/specifications/entry-points/>`_.
+
+SNMP Command Responder will discover such packages, import the extensions they
+announce and walk through the files it finds under the top-level package
+directory. Matching files will be treated as MIB modules expressed in pysnmp
+MIB/SMI data model i.e. loaded, executed and brought on-line by SNMP
+Command Responder and served to SNMP managers.
+
+.. code-block:: bash
+
+    managed-objects-group {
+      mib-text-search-path-list: http://mibs.snmplabs.com/asn1/
+      mib-code-packages-pattern-list: examples\..*
+
+      mib-tree-id: managed-objects-1
+    }
+
 .. note::
 
    Refer to `MIB implementation <mib-implementation-chapter>`_ chapter for

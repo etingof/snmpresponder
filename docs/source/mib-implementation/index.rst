@@ -228,6 +228,34 @@ this:
       mib-tree-id: managed-objects-1
     }
 
+Alternatively, you could put your *SNMPv2-MIB::sysName.py* implementation file into a
+`Python package <https://github.com/etingof/snmpresponder/tree/master/examples/conf/packaged-mibs/snmpresponder-mibs-examples>`_,
+then register the directory containing these MIB files via the entry point
+*snmpresponder.mibs*:
+
+.. code-block:: python
+
+   'entry_points': {
+     'snmpresponder.mibs': 'examples = mypackage'
+   },
+
+With the above registration, SNMP command responder will import *mypackage*
+and consider importing modules matching `mib-code-packages-pattern-list`
+regexp:
+
+.. code-block:: bash
+
+    snmpv2-mib-objects {
+      mib-text-search-path-list: http://mibs.snmplabs.com/asn1/
+      mib-code-packages-pattern-list: mypackage\..*
+
+      mib-tree-id: managed-objects-1
+    }
+
+The main advantage of packaging MIB implementations is that the package becomes
+`pip`-installable and easily distributable. That might be especially convenient
+for generally useful MIB implementations such as *HOST-RESOURCES-MIB*.
+
 Once you are done setting things up and restarting *snmpresponderd*, you should
 be able to read the hostname via SNMP:
 
