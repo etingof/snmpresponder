@@ -20,7 +20,7 @@ def parseTransportAddress(transportDomain, transportAddress, transportOptions, d
          'virtual-interface' in transportOptions) and '$' in transportAddress):
         addrMacro = transportAddress
 
-        if transportDomain[:len(udp.domainName)] == udp.domainName:
+        if transportDomain[:len(udp.DOMAIN_NAME)] == udp.DOMAIN_NAME:
             h, p = '0.0.0.0', defaultPort
         else:
             h, p = '::0', defaultPort
@@ -28,7 +28,7 @@ def parseTransportAddress(transportDomain, transportAddress, transportOptions, d
     else:
         addrMacro = None
 
-        if transportDomain[:len(udp.domainName)] == udp.domainName:
+        if transportDomain[:len(udp.DOMAIN_NAME)] == udp.DOMAIN_NAME:
             if ':' in transportAddress:
                 h, p = transportAddress.split(':', 1)
             else:

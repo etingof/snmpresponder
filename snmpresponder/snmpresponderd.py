@@ -46,25 +46,25 @@ PLUGIN_API_VERSION = 1
 CONFIG_FILE = '/etc/snmpresponder/snmpresponderd.cfg'
 
 authProtocols = {
-  'MD5': config.usmHMACMD5AuthProtocol,
-  'SHA': config.usmHMACSHAAuthProtocol,
-  'SHA224': config.usmHMAC128SHA224AuthProtocol,
-  'SHA256': config.usmHMAC192SHA256AuthProtocol,
-  'SHA384': config.usmHMAC256SHA384AuthProtocol,
-  'SHA512': config.usmHMAC384SHA512AuthProtocol,
-  'NONE': config.usmNoAuthProtocol
+  'MD5': config.USM_AUTH_HMAC96_MD5,
+  'SHA': config.USM_AUTH_HMAC96_SHA,
+  'SHA224': config.USM_AUTH_HMAC128_SHA224,
+  'SHA256': config.USM_AUTH_HMAC192_SHA256,
+  'SHA384': config.USM_AUTH_HMAC256_SHA384,
+  'SHA512': config.USM_AUTH_HMAC384_SHA512,
+  'NONE': config.USM_AUTH_NONE
 }
 
 privProtocols = {
-  'DES': config.usmDESPrivProtocol,
-  '3DES': config.usm3DESEDEPrivProtocol,
-  'AES': config.usmAesCfb128Protocol,
-  'AES128': config.usmAesCfb128Protocol,
-  'AES192': config.usmAesCfb192Protocol,
-  'AES192BLMT': config.usmAesBlumenthalCfb192Protocol,
-  'AES256': config.usmAesCfb256Protocol,
-  'AES256BLMT': config.usmAesBlumenthalCfb256Protocol,
-  'NONE': config.usmNoPrivProtocol
+  'DES': config.USM_PRIV_CBC56_DES,
+  '3DES': config.USM_PRIV_CBC168_3DES,
+  'AES': config.USM_PRIV_CFB128_AES,
+  'AES128': config.USM_PRIV_CFB128_AES,
+  'AES192': config.USM_PRIV_CFB192_AES,
+  'AES192BLMT': config.USM_PRIV_CFB192_AES_BLUMENTHAL,
+  'AES256': config.USM_PRIV_CFB256_AES,
+  'AES256BLMT': config.USM_PRIV_CFB256_AES_BLUMENTHAL,
+  'NONE': config.USM_PRIV_NONE
 }
 
 snmpPduTypesMap = {
@@ -563,8 +563,8 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
         transportDomain = cfgTree.getAttrValue('snmp-transport-domain', *configEntryPath)
         transportDomain = rfc1902.ObjectName(transportDomain)
 
-        if (transportDomain[:len(udp.domainName)] != udp.domainName and
-                udp6 and transportDomain[:len(udp6.domainName)] != udp6.domainName):
+        if (transportDomain[:len(udp.DOMAIN_NAME)] != udp.DOMAIN_NAME and
+                udp6 and transportDomain[:len(udp6.DOMAIN_NAME)] != udp6.DOMAIN_NAME):
             log.error('unknown transport domain %s' % (transportDomain,))
             return
 
@@ -585,7 +585,7 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
                 log.error('bad snmp-bind-address specification %s at %s' % (bindAddr, '.'.join(configEntryPath)))
                 return
 
-            if transportDomain[:len(udp.domainName)] == udp.domainName:
+            if transportDomain[:len(udp.DOMAIN_NAME)] == udp.DOMAIN_NAME:
                 transport = udp.UdpTransport()
             else:
                 transport = udp6.Udp6Transport()
@@ -650,7 +650,7 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
 
                 if securityLevel in (2, 3):
                     usmAuthProto = cfgTree.getAttrValue(
-                        'snmp-usm-auth-protocol', *configEntryPath, default=config.usmHMACMD5AuthProtocol)
+                        'snmp-usm-auth-protocol', *configEntryPath, default=config.USM_AUTH_HMAC96_MD5)
                     try:
                         usmAuthProto = authProtocols[usmAuthProto.upper()]
                     except KeyError:
@@ -661,7 +661,7 @@ Software documentation and support at http://snmplabs.com/snmpresponder/
 
                     if securityLevel == 3:
                         usmPrivProto = cfgTree.getAttrValue(
-                            'snmp-usm-priv-protocol', *configEntryPath, default=config.usmDESPrivProtocol)
+                            'snmp-usm-priv-protocol', *configEntryPath, default=config.USM_PRIV_CBC56_DES)
                         try:
                             usmPrivProto = privProtocols[usmPrivProto.upper()]
                         except KeyError:
